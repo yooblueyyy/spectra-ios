@@ -10,6 +10,11 @@
 // Threading: main thread only, except what SGTimePitch.h says runs on the render thread.
 #import <UIKit/UIKit.h>
 
+// Spectra: Pitch follows speed. On (the default), a speed other than 1 plays the song faster and higher
+// together, like a record, by resampling instead of time stretching; a pitch moved as well still goes
+// through the time and pitch unit. Applies as it changes.
+#define SGKeyPitchFollowsSpeed @"spotifyglass.spectra.pitchFollowsSpeed"
+
 // Marks a menu opened soon after a tap on `button`, the player's more button, as the player's, so it gets
 // Speed and pitch (watching it twice does nothing). The redesign's PlayerHeader.x hands its button over;
 // a menu presented from a now playing controller is taken for the player's without it, which is how the

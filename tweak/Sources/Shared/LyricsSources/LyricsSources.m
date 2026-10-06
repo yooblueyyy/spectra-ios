@@ -148,8 +148,9 @@ NSArray<SGLyricsProvider *> *SGLyricsAllProviders(void) {
             provider.ask = ask;
             return provider;
         };
+        // Spectra: Spicy Lyrics is not offered. Its author allowed the project this code comes from to
+        // reach his API this way; that permission does not carry over to Spectra.
         all = @[
-            make(@"spicylyrics", @"Spicy Lyrics", @"Syllable timing, uses your Spotify token", SGSpicyLyricsAsk),
             make(@"binilyrics", @"BiniLyrics", @"Apple Music word timing", SGBiniLyricsAsk),
             make(@"musixmatch", @"Musixmatch", @"Spotify's licensed catalogue", SGMusixmatchAsk),
             make(@"unison", @"Unison", @"Hand-timed, few tracks", SGUnisonAsk),

@@ -6,7 +6,7 @@
 #import <UIKit/UIKit.h>
 #import "Settings/SGModPage.h"
 
-extern NSString *const SGUpdateURL;   // spoti.pw's; the site and the repo are in Settings/SGPageStyle.h
+extern NSString *const SGUpdateURL;   // the Spectra iOS repo's releases; the site and the repo are in Settings/SGPageStyle.h
 extern NSString *const SGUpdateCheckedNotification;   // on the main thread, after a check ends either way
 
 // One line of a release's changelog: what changed, under the heading Release Please put it under,
@@ -33,9 +33,9 @@ NSString *SGUpdateStatus(void);
 void SGCheckForUpdate(BOOL force);
 UIViewController *SGUpdatePage(void);   // UpdatePage.m: the state and the changelog
 
-// Usage.m: the body the check posts to spoti.pw, nil while the switch is off. The key sits outside
+// Usage.m: an install count body, never sent by Spectra (always nil). The key sits outside
 // "spotifyglass." so that Reset all settings neither switches the count off nor undoes an opt-out.
-#define SGKeyUsage @"spotipw.usage"
+#define SGKeyUsage @"spectra.usage"
 NSData *SGUsageBody(void);
 BOOL SGUsageOwed(void);        // on, and not yet sent this UTC day
 void SGUsageNoteAsked(void);

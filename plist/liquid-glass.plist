@@ -8,5 +8,7 @@
 	<true/>
 	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
 	<true/>
+	<key>NSMotionUsageDescription</key>
+	<string>Spectra reads your AirPods' head movement for head gestures: a double nod or a shake of the head.</string>
 </dict>
 </plist>

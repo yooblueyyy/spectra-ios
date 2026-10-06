@@ -23,6 +23,7 @@
 #import "Shared/LiveActivity/LiveActivity.h"
 #import "App/About/About.h"
 #import "App/Donate/Donate.h"
+#import "Spectra/Spectra.h"
 #import "Pages.h"
 
 static const CGFloat kRowHeight = 56;
@@ -40,7 +41,9 @@ static UIViewController *modSettingsPage(void) {
     // that no switch can put right, and it is worth reading before anything else.
     SGModRow *signing = SGSigningWarningRow();
     if (signing) [sections addObject:SGSection(nil, @[signing])];
-    [sections addObject:SGSection(nil, @[SGDonateRow()])];
+    SGModRow *spectra = pageRow(@"Spectra", @"sparkles", ^UIViewController *{ return SPXSpectraPage(); });
+    spectra.subtitle = @"Dashboard, Sing, stats and more";
+    [sections addObject:SGSection(nil, @[spectra])];
     SGModRow *mod = pageRow(@"Mod", @"info.circle", ^UIViewController *{ return SGAboutPage(); });
     mod.value = ^NSString *{ return @(SG_VERSION); };
     // JamesDSP works on the sound, so both looks have it, with what it is doing beside the chevron.

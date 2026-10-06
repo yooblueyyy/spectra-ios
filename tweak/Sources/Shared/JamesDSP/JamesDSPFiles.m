@@ -1,4 +1,4 @@
-// JamesDSP's file libraries: Documents/spoti.pw/JamesDSP/<Convolver|DDC|Liveprog>, where the file effects
+// JamesDSP's file libraries: Documents/Spectra/JamesDSP/<Convolver|DDC|Liveprog>, where the file effects
 // find their files by name. Documents, which the app's backups keep.
 //
 // The first time a library is made it gets the files JamesDSP ships (RootlessJamesDSP's Liveprog scripts
@@ -62,7 +62,7 @@ static void installBundled(SGDSPFileKind kind, NSString *directory) {
 NSString *SGDSPLibraryDirectory(SGDSPFileKind kind) {
     static os_unfair_lock lock = OS_UNFAIR_LOCK_INIT;
     NSString *documents = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
-    NSString *directory = [[documents stringByAppendingPathComponent:@"spoti.pw/JamesDSP"] stringByAppendingPathComponent:libraryName(kind)];
+    NSString *directory = [[documents stringByAppendingPathComponent:@"Spectra/JamesDSP"] stringByAppendingPathComponent:libraryName(kind)];
     os_unfair_lock_lock(&lock);
     BOOL isDirectory = NO;
     if (![NSFileManager.defaultManager fileExistsAtPath:directory isDirectory:&isDirectory] || !isDirectory) {

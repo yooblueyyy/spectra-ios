@@ -303,9 +303,8 @@ static NSString *shapeOf(NSDictionary *document) {
 // native URLSession sends. Without it the reply is the plain-text tier rather than Apple Music's
 // syllables, which is why hundreds of tracks came back Type=Static.
 //
-// Spicy Lyrics' author was asked directly (2026-09-20) and allowed the mod to present itself this
-// way, on the one condition that it stays open source, which spoti.pw is. He said he would not add a
-// client of his own for us, and that this is the way, as EeveeSpotify already does it.
+// Spicy Lyrics' author allowed the project this file comes from to present itself this way. That
+// permission does not carry over, so Spectra leaves this source out of the list (LyricsSources.m).
 static NSDictionary<NSString *, NSString *> *desktopClient(void) {
     return @{
         @"Origin": @"https://xpui.app.spotify.com",

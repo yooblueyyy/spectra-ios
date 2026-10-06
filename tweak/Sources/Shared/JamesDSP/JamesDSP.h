@@ -120,7 +120,7 @@ typedef NS_ENUM(NSInteger, SGDSPFileKind) {
     SGDSPFileLiveprog,          // Liveprog's .eel
 };
 
-// Documents/spoti.pw/JamesDSP/<Convolver|DDC|Liveprog>, made on first use and holding the files JamesDSP
+// Documents/Spectra/JamesDSP/<Convolver|DDC|Liveprog>, made on first use and holding the files JamesDSP
 // ships (Liveprog scripts, DDC presets) the first time it is made.
 NSString *SGDSPLibraryDirectory(SGDSPFileKind kind);
 NSArray<NSString *> *SGDSPLibraryFiles(SGDSPFileKind kind);   // names, sorted

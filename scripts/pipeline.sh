@@ -99,6 +99,17 @@ else
   echo "==> no Xcode selected: building without the Live Activity extension"
 fi
 
+# The Spectra dashboard (Spectra/Dashboard.m), when the Spectra extension's source is beside this folder
+# or named by SPECTRA_EXTENSION.
+SPECTRA_EXTENSION="${SPECTRA_EXTENSION:-$ROOT/../extension}"
+if [ -d "$SPECTRA_EXTENSION/dashboard" ]; then
+  echo "==> building the Spectra dashboard bundle"
+  "$ROOT/scripts/build-dashboard.sh" "$SPECTRA_EXTENSION" "$ROOT/out"
+  FILES+=("$ROOT/out/SpectraDashboard.bundle")
+else
+  echo "==> no Spectra extension at $SPECTRA_EXTENSION: building without the dashboard"
+fi
+
 # Spotify's widget reads what the app writes through App Group suites the re-signed IPA is not entitled
 # to; this dylib, loaded by the app and by the widget, puts both on a group the signature does have.
 echo "==> building the App Group shim"

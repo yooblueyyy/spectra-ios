@@ -117,7 +117,7 @@ Shared:
                   each finished buffer through SGDSPEngine.m, libjamesdsp re-blocked to 1024 frames one block late, in
                   place (JamesDSP.x). The buffers are in the unit's output format, the hardware's, not the client format
                   Spotify sets. Settings apply as they change, on a queue of its own; the file effects read their files
-                  from Documents/spoti.pw/JamesDSP (JamesDSPFiles.m). Tested on the Mac against harness/jamesdsp/,
+                  from Documents/Spectra/JamesDSP (JamesDSPFiles.m). Tested on the Mac against harness/jamesdsp/,
                   the hook in the simulator against its sim/
     Haptics/      Vibrations (Haptics.h lists its files): a tap of UIKit's feedback generators for the player's and the now
                   playing bar's controls, the scrubber's tenths and ends, cover swipes, gestures and the lyrics page's tap to
@@ -226,7 +226,7 @@ and Live Activity. The root page in `App/ModSettings.x` holds the Appearance car
 
 ## Make targets
 
-    make build      # out/spoti.pw-<version>.ipa with FLEX in it
+    make build      # out/Spectra-iOS-<version>.ipa with FLEX in it
     make release    # the same without FLEX
     make install    # build without FLEX, sign with your certificate, install over USB
     make install FLEX=1   # the same with FLEX, which is what make trees reads through

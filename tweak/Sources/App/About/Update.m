@@ -6,7 +6,6 @@
 #import "Core/SGCore.h"
 #import "About.h"
 
-// Spectra: releases come straight from the Spectra iOS repo; nothing is sent to spoti.pw.
 NSString *const SGUpdateURL = @"https://api.github.com/repos/yooblueyyy/spectra-ios/releases?per_page=20";
 NSString *const SGUpdateCheckedNotification = @"spotifyglass.update.checked.notification";
 

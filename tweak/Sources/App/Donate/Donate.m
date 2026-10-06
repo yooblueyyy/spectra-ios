@@ -7,8 +7,8 @@
 NSString *const SGKofiURL = @"https://ko-fi.com/darkksh";
 
 // Outside the "spotifyglass." prefix, so Reset all settings does not bring the sheet back early.
-static NSString *const kNextKey = @"spotipw.donate.next";
-static NSString *const kAfterTourKey = @"spotipw.donate.aftertour";
+static NSString *const kNextKey = @"spectra.donate.next";
+static NSString *const kAfterTourKey = @"spectra.donate.aftertour";
 static const NSTimeInterval kDay = 86400;
 static const NSTimeInterval kFirstAsk = 2 * kDay, kEvery = 14 * kDay, kAfterDonating = 90 * kDay;
 static const NSTimeInterval kSettle = 20, kRetry = 5;
@@ -241,8 +241,10 @@ static void askAgainIn(NSTimeInterval wait) {
     [NSUserDefaults.standardUserDefaults setDouble:now() + wait forKey:kNextKey];
 }
 
+// Spectra: this donation sheet is never offered; the project Spectra iOS is built on is credited under
+// Spectra > Credits & licences instead. These stay so the tour and Mod Settings build unchanged.
 BOOL SGDonateAfterTourPending(void) {
-    return [NSUserDefaults.standardUserDefaults boolForKey:kAfterTourKey];
+    return NO &&  [NSUserDefaults.standardUserDefaults boolForKey:kAfterTourKey];
 }
 
 #pragma mark - sheet
@@ -353,7 +355,7 @@ static char kCardGlassKey;
     UIView *hero = [self hero];
     UILabel *eyebrow = [self label:@"A STUDENT PROJECT" font:[UIFont systemFontOfSize:12 weight:UIFontWeightBold] color:SGKofiColor()];
     eyebrow.attributedText = [[NSAttributedString alloc] initWithString:eyebrow.text attributes:@{NSKernAttributeName: @1.4}];
-    UILabel *title = [self label:@"Enjoying spoti.pw?" font:[UIFont systemFontOfSize:26 weight:UIFontWeightBold] color:UIColor.whiteColor];
+    UILabel *title = [self label:@"Support spoti.pw's author" font:[UIFont systemFontOfSize:26 weight:UIFontWeightBold] color:UIColor.whiteColor];
     UILabel *body = [self label:@"I'm a student and I build it for free, in my spare time. If it made your music better, a coffee helps me keep going."
                            font:[UIFont systemFontOfSize:15] color:[UIColor colorWithWhite:1 alpha:0.72]];
 
@@ -499,15 +501,18 @@ static void offerWhenClear(NSInteger tries) {
 }
 
 void SGDonateAfterTour(BOOL restarting) {
+    return;
     [NSUserDefaults.standardUserDefaults setBool:YES forKey:kAfterTourKey];
     if (!restarting) SGOfferDonate();
 }
 
 void SGOfferDonate(void) {
+    return;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{ offerWhenClear(kTries); });
 }
 
 void SGWatchForDonate(void) {
+    return;
     nextAsk();
     __block id observer = [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidBecomeActiveNotification
                                                                           object:nil

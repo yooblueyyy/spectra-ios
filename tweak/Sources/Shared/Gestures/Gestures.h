@@ -6,6 +6,8 @@
 #define SGKeyGestureSplit @"spotifyglass.gestures.split"
 #define SGKeyGestureStep @"spotifyglass.gestures.step"
 #define SGKeyGestureZones @"spotifyglass.gestures.zones"
+// Spectra: holding the left or right side of the cover plays at 2x until the finger lifts. Off until asked for.
+#define SGKeyHoldFaster @"spotifyglass.spectra.holdFaster"
 
 typedef NS_ENUM(NSInteger, SGGestureAction) {
     SGGestureNothing = 0,

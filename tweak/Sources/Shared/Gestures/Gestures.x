@@ -7,6 +7,7 @@
 #import "Core/SGCore.h"
 #import "Gestures.h"
 #import "Headers/SPTNowPlayingPlaybackController.h"
+#import "Shared/Player/SpeedPitch.h"
 
 static __weak SPTNowPlayingPlaybackControllerImplementation *sg_player;
 static void (^sg_observer)(SGGestureAction action);
@@ -74,6 +75,26 @@ static void perform(SGGestureAction action) {
     perform((SGGestureAction)zones[(NSUInteger)cell].integerValue);
 }
 
+// Spectra: a finger held on either side of the cover plays at 2x until it lifts, the speed before
+// coming back then. The middle third is left to Spotify's own touches.
+- (void)held:(UILongPressGestureRecognizer *)press {
+    static double before = 1;
+    static BOOL holding;
+    if (press.state == UIGestureRecognizerStateBegan) {
+        if (!SGHidden(SGKeyHoldFaster) || !SGPlayerSpeedAllowed()) return;
+        UIView *host = press.view;
+        CGFloat x = [press locationInView:host].x - host.bounds.origin.x, width = host.bounds.size.width;
+        if (width <= 0 || (x > width * 0.3 && x < width * 0.7)) return;
+        before = SGPlayerSpeed();
+        holding = YES;
+        SGSetPlayerSpeed(2);
+        [[[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleMedium] impactOccurred];
+    } else if (holding && press.state != UIGestureRecognizerStateChanged) {
+        holding = NO;
+        SGSetPlayerSpeed(before);
+    }
+}
+
 @end
 
 static SGGestureTarget *target(void) {
@@ -95,7 +116,7 @@ static void yieldSingleTaps(UIView *host, UITapGestureRecognizer *tap) {
     }
 }
 
-static char kTapKey, kSeenKey;
+static char kTapKey, kSeenKey, kHoldKey;
 
 // Spotify adds its own recognizers as the player's controllers load, which is not ordered against
 // this hook: the count of what stands above the artwork is watched so a later one still yields.
@@ -105,7 +126,17 @@ static NSUInteger tapsAbove(UIView *host) {
     return count;
 }
 
+static void attachHold(UIView *host) {
+    if (!SGHidden(SGKeyHoldFaster) || objc_getAssociatedObject(host, &kHoldKey)) return;
+    UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc] initWithTarget:target() action:@selector(held:)];
+    press.minimumPressDuration = 0.35;
+    press.cancelsTouchesInView = NO;
+    [host addGestureRecognizer:press];
+    objc_setAssociatedObject(host, &kHoldKey, press, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
 void SGGestureAttach(UIView *host) {
+    if (host) attachHold(host);
     if (!host || !SGFlag(SGKeyGestures, NO)) return;
     UITapGestureRecognizer *tap = objc_getAssociatedObject(host, &kTapKey);
     if (!tap) {

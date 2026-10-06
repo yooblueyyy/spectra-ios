@@ -139,6 +139,53 @@ static BOOL fitsUnit(const AudioBufferList *data, UInt32 frames, SGTimePitch *un
     return YES;
 }
 
+#pragma mark - the render thread: Pitch follows speed (Spectra)
+
+// A speed with Pitch follows speed on is a resampler instead of the time and pitch unit: the source is
+// pulled for speed times the frames handed on and read back at that rate, linearly interpolated, so the
+// song plays faster and higher together with none of the time stretch's smearing. sg_varPosition is where
+// the next output frame falls, counted from the last input frame of the previous buffer (kept in
+// sg_varCarry), so buffers join without a click.
+enum { kVarMaxInput = kSGTimePitchMaxFrames * 4 + 8 };
+static atomic_bool sg_varispeed;              // set from the main thread: resample rather than stretch
+static float sg_varInput[kSGTimePitchMaxChannels][kVarMaxInput];
+static float sg_varCarry[kSGTimePitchMaxChannels];
+static double sg_varPosition;
+static BOOL sg_varPrimed;
+
+static OSStatus resample(AudioUnit source, const AudioTimeStamp *timestamp, UInt32 frames, AudioBufferList *data, float speed) {
+    UInt32 channels = data->mNumberBuffers;
+    if (channels < 1 || channels > kSGTimePitchMaxChannels || speed <= 0 || speed > 4 || frames > kSGTimePitchMaxFrames) return -1;
+    for (UInt32 c = 0; c < channels; c++) {
+        if (!data->mBuffers[c].mData || data->mBuffers[c].mDataByteSize < frames * sizeof(float)) return -1;
+    }
+    double last = sg_varPosition + (double)(frames - 1) * speed;
+    UInt32 need = (UInt32)floor(last) + 1;   // input frames after the carried one
+    if (need + 1 > kVarMaxInput) return -1;
+    struct { AudioBufferList list; AudioBuffer more[kSGTimePitchMaxChannels - 1]; } input;
+    input.list.mNumberBuffers = channels;
+    for (UInt32 c = 0; c < channels; c++) {
+        input.list.mBuffers[c] = (AudioBuffer){1, need * (UInt32)sizeof(float), sg_varInput[c] + 1};
+    }
+    OSStatus status = pullSource(source, timestamp, need, &input.list);
+    if (status != noErr) return status;
+    for (UInt32 c = 0; c < channels; c++) {
+        float *line = sg_varInput[c];
+        line[0] = sg_varPrimed ? sg_varCarry[c] : line[1];
+        float *out = data->mBuffers[c].mData;
+        for (UInt32 i = 0; i < frames; i++) {
+            double position = sg_varPosition + (double)i * speed;
+            UInt32 index = (UInt32)position;
+            float fraction = (float)(position - index);
+            out[i] = line[index] + (line[index + 1] - line[index]) * fraction;
+        }
+        sg_varCarry[c] = line[need];
+    }
+    sg_varPrimed = YES;
+    sg_varPosition = sg_varPosition + (double)frames * speed - need;
+    return noErr;
+}
+
 // The RemoteIO unit's input, in place of Spotify's connection from the mixer.
 static OSStatus feed(void *refCon, AudioUnitRenderActionFlags *flags, const AudioTimeStamp *timestamp, UInt32 bus,
                      UInt32 frames, AudioBufferList *data) {
@@ -151,7 +198,13 @@ static OSStatus feed(void *refCon, AudioUnitRenderActionFlags *flags, const Audi
     atomic_store(&sg_busy, true);
     OSStatus status = -1;
     SGTimePitch *unit = atomic_load(&sg_pull);
-    if (atomic_load(&sg_engaged) && unit && fitsUnit(data, frames, unit)) status = SGTimePitchRender(unit, frames, data);
+    if (atomic_load(&sg_varispeed)) {
+        status = resample(source, timestamp, frames, data, loadFloat(&sg_speedBits));
+    } else {
+        sg_varPrimed = NO;
+        sg_varPosition = 0;
+    }
+    if (status != noErr && atomic_load(&sg_engaged) && unit && fitsUnit(data, frames, unit)) status = SGTimePitchRender(unit, frames, data);
     if (status != noErr) status = pullSource(source, timestamp, frames, data);
     atomic_store(&sg_busy, false);
     return status;
@@ -370,8 +423,15 @@ static void report(void) {
           SGTimePitchConsumed(unit) / SGTimePitchSampleRate(unit));
 }
 
+// Whether a speed goes through the resampler: Pitch follows speed is on, the speed is not normal and the
+// pitch was not moved as well (that still needs the time and pitch unit).
+static BOOL varispeedWanted(void) {
+    return tapped() && sg_speed != 1 && sg_semitones == 0 && SGEnabled(SGKeyPitchFollowsSpeed);
+}
+
 // Puts the unit in or takes it out for the current speed and pitch.
 static void apply(void) {
+    atomic_store(&sg_varispeed, varispeedWanted());
     BOOL normal = sg_speed == 1 && sg_semitones == 0;
     static NSUInteger change;
     NSUInteger thisChange = ++change;

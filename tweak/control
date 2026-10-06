@@ -1,7 +1,7 @@
 Package: xyz.usespectra.ios
 Name: Spectra iOS
 Architecture: iphoneos-arm
-Description: Spectra for the Spotify iOS app, built on spoti.pw (GPL-3.0)
+Description: Spectra for the Spotify iOS app
 Maintainer: Spectra
-Author: Spectra, based on spoti.pw by skopevoj
+Author: Spectra
 Section: Tweaks

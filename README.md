@@ -1,23 +1,33 @@
 # Spectra iOS
 
-Spectra for the Spotify iOS app: Liquid Glass, karaoke ("sing") lyrics, more lyric sources,
-lock-screen lyrics, a Live Activity, the JamesDSP equaliser, music haptics, speed and pitch,
-artist block, gestures, ad and upsell hiding, Spotify's experiment flags and privacy switches.
+Spectra for the Spotify iOS app: Liquid Glass, karaoke lyrics, more lyric sources, lock-screen
+lyrics, a Live Activity, the JamesDSP equaliser, music haptics, speed and pitch, artist block,
+gestures, ad and upsell hiding, Spotify's experiment flags and privacy switches.
+
+Spectra's own additions, under **Mod Settings > Spectra**:
+
+- **Spectra dashboard**: the dashboard's Extensions, Snippets and Admin panel, in the app
+- **Sing**: turns the song's vocals down so you can sing over it, live
+- **Reverb**, with a room size
+- **Pitch follows speed**: a faster song plays higher, like a record, without time-stretch smearing
+- **Hold the cover's sides for 2x**
+- **Listening stats** kept on the phone, with Spotify's own data export imported
+- **AirPods head gestures**: a double nod and a shake of the head, each set to an action
+- **Apple Music red** accent, **What's new** after an update, and warnings for an unsupported
+  Spotify version or EeveeSpotify injected alongside
 
 A no-jailbreak Theos tweak, injected into **your own** decrypted Spotify IPA and signed with your own
 certificate or signer. No IPA is distributed here.
 
 Part of [Spectra](https://usespectra.xyz), which also covers Spotify on the web, desktop and Quest.
 
-## Built on spoti.pw
+## Credits
 
-Spectra iOS is a fork of **[spoti.pw](https://github.com/skopevoj/spoti.pw) by skopevoj**, from its
-**v0.21.1** release, the last one published under GPL-3.0. All of the features above are spoti.pw's
-work. Later spoti.pw releases are under a different licence and none of their code is used here.
-
-If you like it, support the original author: [ko-fi.com/darkksh](https://ko-fi.com/darkksh).
-spoti.pw's own README is kept as [README.spoti.pw.md](README.spoti.pw.md) and its history as
-[CHANGELOG.md](CHANGELOG.md).
+Spectra iOS is a fork of **[spoti.pw](https://github.com/skopevoj/spoti.pw/tree/v0.21.1) by
+skopevoj**, from its **v0.21.1** release, the last one published under GPL-3.0. The first paragraph
+above is spoti.pw's work; support its author at [ko-fi.com/darkksh](https://ko-fi.com/darkksh).
+Later spoti.pw releases are under another licence and none of their code is used here: Spectra's
+additions are written for Spectra.
 
 ## Requirements
 
@@ -42,6 +52,9 @@ Put the decrypted `.ipa` in `ipa/`, then:
 
     make release    # out/Spectra-iOS-<version>.ipa, unsigned
 
+With the Spectra repo's `extension/` folder beside this one (or `SPECTRA_EXTENSION` pointing at
+it), the build also puts the dashboard in the app.
+
 ## Signing
 
 Sign with SideStore, AltStore, Sideloadly, Feather or any certificate signer. Use a bundle id that
@@ -57,10 +70,16 @@ Free Apple IDs can only sign a few app ids, so keep the app's extensions to a mi
 - **No install counts.** `App/About/Usage.m` never sends usage data; the update check
   (`App/About/Update.m`) asks this repo's GitHub releases directly instead of spoti.pw's server.
 - **Links and names** point to Spectra (`Settings/SGPageStyle.m`, `App/About/Signing.m`,
-  `Shared/LyricsSources/LrcLib.m`, `App/ModSettings.x`, `tweak/control`, `scripts/pipeline.sh`);
-  the "Support spoti.pw" row stays and credits the original author (`App/Donate/Donate.m`).
-- Version restarted at 1.0.0 (`version.txt`). spoti.pw's release automation, GitHub Actions and AI
-  agent notes are not included.
+  `Shared/LyricsSources/LrcLib.m`, `App/ModSettings.x`, `tweak/control`, `scripts/pipeline.sh`).
+- **Spicy Lyrics is not offered** as a lyrics source (`LyricsSources.m`): its author's permission
+  to reach his API that way was given to spoti.pw.
+- **No donation prompts** (`App/Donate/Donate.m`); spoti.pw is credited in the app under
+  Spectra > Credits & licences.
+- **Pitch follows speed** added to `Shared/Player/SpeedPitch.x`, **hold for 2x** to
+  `Shared/Gestures/Gestures.x`; everything else Spectra adds is in `tweak/Sources/Spectra/` and
+  `dashboard/`.
+- Spectra's own version numbers (`version.txt`), changelog and README. spoti.pw's release
+  automation, GitHub Actions, AI agent notes, screenshots and icon are not included.
 
 ## Licence
 
